@@ -60,6 +60,27 @@ iOS 26/27+ 会缓存旧定位，改了可能没变化，必须重启清缓存：
 
 ---
 
+## 快捷指令（安装与使用）
+
+「快捷指令」是 iOS **自带 App**（彩色双方块图标）。两个 wloc 指令需先安装一次。
+
+**安装**：用 iPhone Safari 打开链接 → 跳到「快捷指令」App → 点「添加快捷指令」
+- 设置定位：https://www.icloud.com/shortcuts/a82717d8fdad4e6280866fcf911173f7
+- 清理恢复：https://www.icloud.com/shortcuts/f42632d406504f24a2cd163af4fe012f
+- 若不能添加：设置 → 快捷指令 → 打开「允许不受信任的快捷指令」
+
+**在哪**：打开「快捷指令」App →「我的快捷指令」标签，看到两张卡片。
+
+**运行**：
+- 设置定位：地图长按选点 → 共享 →「wloc 设置地理位置」（苹果地图：共享；高德：分享 → 更多）
+- 恢复真实定位：直接点「wloc 清理恢复位置」卡片
+
+**走自己的实例**：长按指令 → 编辑 → 把网址里的 `wloc-spoofer.wloc.workers.dev` 改成 `wloc-spoofer.realyn.workers.dev`。
+
+**原理与成功标志**：指令先请求 `/api/parse` 解析坐标 → 再请求 `gs-loc.apple.com/wloc-settings/save?lon=&lat=`，**由 Surge 模块拦截并写入**。拦截成功时 save 接口返回 `{"success":true,"longitude":..,"latitude":..,"accuracy":25}`，这就是指令应显示的内容。若显示别的（如非 JSON 文本、报错），多半是 Surge 没拦截到 save 请求——见下方排查。
+
+---
+
 ## 一键更新 + 部署
 
 仓库根提供 [`deploy.sh`](deploy.sh)，一条命令完成「同步上游 → 部署 → 推送私有仓库」：
